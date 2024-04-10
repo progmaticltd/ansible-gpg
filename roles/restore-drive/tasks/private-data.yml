@@ -1,0 +1,45 @@
+---
+
+- name: Open the LUKS container
+  delegate_to: local_sudo
+  community.crypto.luks_device:
+    device: '{{ disk_device }}2'
+    passphrase: '{{ luks_passphrase }}'
+    type: luks2
+    state: opened
+    name: gnupg-private
+
+- name: Mount the partition
+  delegate_to: local_sudo
+  ansible.posix.mount:
+    src: /dev/mapper/gnupg-private
+    fstype: ext4
+    path: /media/{{ user }}/gnupg-private
+    state: ephemeral
+    opts: sync
+  ignore_errors: true
+
+- name: Copy the private files
+  copy:
+    src: /media/{{ user }}/gnupg-private/{{ gnupg.name }}/{{ file }}
+    dest: '{{ backup_dir }}/{{ gnupg.name }}/{{ file }}'
+    mode: '0600'
+  loop: '{{ private_files }}'
+  loop_control:
+    loop_var: file
+
+- name: Unmount the partition
+  delegate_to: local_sudo
+  ansible.posix.mount:
+    src: /dev/mapper/gnupg-private
+    path: /media/{{ user }}/gnupg-private
+    state: unmounted
+
+- name: Close LUKS container
+  delegate_to: local_sudo
+  community.crypto.luks_device:
+    device: '{{ disk_device }}2'
+    passphrase: '{{ luks_passphrase }}'
+    type: luks2
+    state: closed
+    name: gnupg-private

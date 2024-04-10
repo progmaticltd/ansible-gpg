@@ -1,0 +1,34 @@
+---
+
+- name: Check the current partitions table
+  register: disk_info
+  delegate_to: local_sudo
+  community.general.parted:
+    device: '{{ disk_device }}'
+    state: info
+
+- name: Show the partitions we found
+  debug:
+    var: disk_info
+    verbosity: 2
+
+- name: Store the partition names
+  set_fact:
+    part1_name: '{{ disk_info.partitions[0].name | default(None) }}'
+    part2_name: '{{ disk_info.partitions[1].name | default(None) }}'
+
+- name: Set the flags to delete the partitions
+  set_fact:
+    part1_rm: '{{ part1_name is defined and part1_name != "gnupg-public" }}'
+    part2_rm: '{{ part2_name is defined and part2_name != "gnupg-private" }}'
+
+- name: Delete the first partition
+  delegate_to: local_sudo
+  when: part1_rm or part2_rm
+  community.general.parted:
+    device: '{{ disk_device }}'
+    number: '{{ part.num }}'
+    state: absent
+  loop: '{{ disk_info.partitions | default([]) }}'
+  loop_control:
+    loop_var: part

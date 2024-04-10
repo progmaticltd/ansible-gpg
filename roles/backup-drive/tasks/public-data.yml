@@ -19,7 +19,6 @@
     dev: '{{ disk_device }}1'
     fstype: ext4
     state: present
-    force: true
     opts: '-L gnupg-public'
 
 - name: Mount the partition

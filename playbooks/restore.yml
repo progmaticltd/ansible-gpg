@@ -1,0 +1,16 @@
+---
+
+- name: Restore the generated GPG key
+  hosts: localhost
+  vars:
+    backup_dir: '{{ playbook_dir }}/../backup/'
+  vars_prompt:
+    - name: luks_passphrase
+      prompt: Please, enter the LUKS passphrase
+      private: true
+  vars_files:
+    - '{{ playbook_dir }}/../config/settings.yml'
+  become: false
+  roles:
+    - name: restore the data from the backup drive
+      role: restore-drive

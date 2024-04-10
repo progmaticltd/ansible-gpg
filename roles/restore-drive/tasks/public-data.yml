@@ -1,0 +1,33 @@
+---
+
+- name: Mount the public partition
+  delegate_to: local_sudo
+  ansible.posix.mount:
+    src: '{{ disk_device }}1'
+    fstype: ext4
+    path: /media/{{ user }}/gnupg-public
+    state: ephemeral
+    opts: ro
+  ignore_errors: true
+
+- name: Create the restore directory
+  file:
+    path: '{{ backup_dir }}/{{ gnupg.name }}/'
+    state: directory
+
+- name: Copy the public key related files
+  copy:
+    src: /media/{{ user }}/gnupg-public/{{ gnupg.name }}/{{ file }}
+    dest: '{{ backup_dir }}/{{ gnupg.name }}/{{ file }}'
+  loop:
+    - public-key.asc
+    - ssh-public-key.pub
+  loop_control:
+    loop_var: file
+
+- name: Unmount the partition
+  delegate_to: local_sudo
+  ansible.posix.mount:
+    src: '/dev/mapper/gnupg-public'
+    path: /media/{{ user }}/gnupg-public
+    state: unmounted

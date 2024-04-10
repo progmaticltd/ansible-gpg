@@ -28,7 +28,6 @@
     dev: /dev/mapper/gnupg-private
     fstype: ext4
     state: present
-    force: true
     opts: '-L gnupg-private'
 
 - name: Mount the partition

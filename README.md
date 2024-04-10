@@ -1,6 +1,6 @@
 # Ansible GPG keys generation
 
-An easy to use GPG key generation using Ansible.
+A powerful, complete and easy to use GPG key generation using Ansible locally.
 
 
 ## What the playbook is doing
@@ -8,8 +8,8 @@ An easy to use GPG key generation using Ansible.
 - [x] Generate elliptic curve keys (certify, signing, encryption and authentication).
 - [x] Generate backup files for paperkey.
 - [x] Generate QRCodes backups of your key.
-- [x] Create encrypted backup using luks.
-- [x] Generate document to print with the credentials.
+- [x] Create or maintain LUKS encrypted backup drives.
+- [x] Restore keys from LUKS encrypted backup drives.
 - [ ] Transfer the keys on a Yubikey.
 
 

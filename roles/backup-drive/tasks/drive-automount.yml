@@ -1,0 +1,8 @@
+---
+
+- name: Activate drives automount again
+  delegate_to: local_sudo
+  systemd:
+    name: udisks2.service
+    state: started
+  ignore_errors: true

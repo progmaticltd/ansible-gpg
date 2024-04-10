@@ -1,0 +1,59 @@
+---
+
+- name: Get all the drives information
+  set_fact:
+    all_drives: '{{ lookup("pipe", "lsblk --json -o name,mountpoint,label,size,uuid") | from_json }}'
+
+- name: Set the backup device
+  set_fact:
+    device_name: ''
+
+- name: Store the backup drive if already present
+  set_fact:
+    device_name: '{{ device.name if device.children[0].label == "gnupg-public" else device_name }}'
+  loop: '{{ all_drives.blockdevices }}'
+  loop_control:
+    loop_var: device
+
+- name: Prevent drives automount
+  delegate_to: local_sudo
+  systemd:
+    name: udisks2.service
+    state: stopped
+  ignore_errors: true
+
+- name: List current block devices
+  when: device_name == ''
+  register: lsblk_before
+  shell: lsblk -l
+  changed_when: false
+
+- name: Wait for the user to plug the drive
+  when: device_name == ''
+  ansible.builtin.pause:
+    prompt: "Please, plug your external drive"
+    seconds: 2
+
+- name: Wait for the drive to be added
+  when: device_name == ''
+  register: lsblk_after
+  shell: lsblk -l
+  changed_when: false
+  retries: 10
+  delay: 2
+  until: lsblk_after.stdout != lsblk_before.stdout
+
+- name: Detect the new drive
+  when: device_name == ''
+  set_fact:
+    device_name: >-
+      {{ lsblk_after.stdout_lines | ansible.builtin.difference(lsblk_before.stdout_lines)
+      | first | regex_replace("\s.*", "") }}
+
+- name: Check that the drive has been detected
+  assert:
+    that: 'device_name is match("^[vsh]d[a-z]$")'
+
+- name: Store the full device path
+  set_fact:
+    disk_device: '/dev/{{ device_name }}'

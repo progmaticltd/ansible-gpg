@@ -1,0 +1,32 @@
+---
+
+- name: Load the certify-key passphrase
+  set_fact:
+    certify_pass: >-
+      {{ lookup("password", backup_dir + "/" + gnupg.name
+      + "/certify-key-passphrase") }}
+  tags: keys
+
+- name: Check for existing keys
+  register: list_secret_keys_cmd
+  shell: gpg --list-secret-keys
+  changed_when: false
+  tags: keys
+
+- name: Restore the certify key
+  when: '"sec" not in list_secret_keys_cmd.stdout'
+  shell: >-
+    gpg2 --batch
+    --passphrase {{ certify_pass | quote }}
+    --import {{ backup_dir }}/{{ gnupg.name }}/certify.key
+  changed_when: true
+  tags: keys
+
+- name: Restore the sub keys
+  when: '"ssb" not in list_secret_keys_cmd.stdout'
+  shell: >-
+    gpg2 --batch
+    --passphrase {{ certify_pass | quote }}
+    --import {{ backup_dir }}/{{ gnupg.name }}/subkeys.key
+  changed_when: true
+  tags: keys

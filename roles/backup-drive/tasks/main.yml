@@ -12,14 +12,18 @@
   include_tasks:
     file: detect-drive.yml
 
-- name: Remove all the partitions from the drive
+- name: Check if the new drive has the correct partitions
   include_tasks:
-    file: drive-erase.yml
+    file: drive-check-partition.yml
 
 - name: Create a first partition and copy the public data
   include_tasks:
-    file: drive-public-partition.yml
+    file: public-data.yml
 
 - name: Create a second partition and copy the private data
   include_tasks:
-    file: drive-private-partition.yml
+    file: private-data.yml
+
+- name: Restart drive automount if stopped
+  include_tasks:
+    file: drive-automount.yml

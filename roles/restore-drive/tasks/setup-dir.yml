@@ -1,0 +1,17 @@
+---
+
+- name: Create the backup directory for this key
+  file:
+    path: '{{ backup_dir }}/{{ gnupg.name }}/'
+    state: directory
+
+- name: Deploy GPG configuration
+  template:
+    src: gpg.conf
+    dest: '{{ gpg_folder }}/gpg.conf'
+
+- name: Kill any running agent
+  shell: gpgconf --kill all
+
+- name: Kill any running agent
+  shell: gpgconf --launch all

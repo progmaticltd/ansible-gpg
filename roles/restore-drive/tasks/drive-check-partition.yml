@@ -1,0 +1,23 @@
+---
+
+- name: Check the current partitions table
+  register: disk_info
+  delegate_to: local_sudo
+  community.general.parted:
+    device: '{{ disk_device }}'
+    state: info
+
+- name: Show the partitions we found
+  debug:
+    var: disk_info
+    verbosity: 2
+
+- name: Store the partition names
+  set_fact:
+    part1_name: '{{ disk_info.partitions[0].name | default(None) }}'
+    part2_name: '{{ disk_info.partitions[1].name | default(None) }}'
+
+- name: Ensure the drive is correct
+  assert:
+    that: 'part1_name is defined and part1_name == "gnupg-public"'
+    that: 'part2_name is defined and part2_name == "gnupg-private"'

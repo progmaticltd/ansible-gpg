@@ -1,0 +1,34 @@
+---
+
+- name: Load the facts
+  include_tasks:
+    file: facts.yml
+
+- name: Prepare the GPG directory
+  include_tasks:
+    file: setup-dir.yml
+
+- name: Detect the new drive
+  include_tasks:
+    file: detect-drive.yml
+
+- name: Check if the new drive has the correct partitions
+  include_tasks:
+    file: drive-check-partition.yml
+
+- name: Create a first partition and copy the public data
+  include_tasks:
+    file: public-data.yml
+
+- name: Create a second partition and copy the private data
+  include_tasks:
+    file: private-data.yml
+
+- name: Restart drive automount if stopped
+  include_tasks:
+    file: drive-automount.yml
+
+- name: Restore GPG data from the backup folder
+  include_tasks:
+    file: restore-gpg.yml
+  tags: keys
