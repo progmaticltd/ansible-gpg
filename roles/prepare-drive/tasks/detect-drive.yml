@@ -1,0 +1,54 @@
+---
+
+- name: List current block devices
+  register: lsblk_before
+  shell: lsblk -l
+  changed_when: false
+
+- name: Wait for the user to plug the drive
+  ansible.builtin.pause:
+    prompt: "Please, plug your external drive"
+    seconds: 2
+
+- name: Wait for the drive to be added
+  register: lsblk_after
+  shell: lsblk -l
+  changed_when: false
+  retries: 10
+  delay: 2
+  until: lsblk_after.stdout != lsblk_before.stdout
+
+- name: Detect the new drive
+  set_fact:
+    device_name: >-
+      {{ lsblk_after.stdout_lines | ansible.builtin.difference(lsblk_before.stdout_lines)
+      | first | regex_replace("\s.*", "") }}
+
+- name: Store the full device path
+  set_fact:
+    disk_device: '/dev/{{ device_name }}'
+    part_device: '/dev/{{ device_name }}1'
+
+- name: Check that the drive has been detected
+  assert:
+    that: 'device_name is match("^[vsh]d[a-z]$")'
+
+- name: Check if the drive has been mounted on insertion
+  register: mountpoint_cmd
+  shell:  mount | sed -En 's:^{{ disk_device }}[0-9]* [a-z]+ ([^ ]+).*:\1:p'
+  failed_when: false
+  changed_when: false
+
+- name: Check if the drive has been mounted on insertion
+  set_fact:
+    mount_points: '{{ mountpoint_cmd.stdout_lines }}'
+
+- name: Unmount all the partitions from ths drive
+  mount:
+    src: '{{ part_device }}{{ ansible_loop.index }}'
+    path: '{{ mp }}'
+    state: unmounted
+  loop: '{{ mount_points }}'
+  loop_control:
+    loop_var: mp
+    extended: true

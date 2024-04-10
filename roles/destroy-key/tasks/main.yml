@@ -1,0 +1,19 @@
+---
+
+- name: Load the facts
+  set_fact:
+    gpg_folder: '{{ lookup("env", "HOME") }}/.gnupg'
+    export_folder: '{{ backup_dir }}/{{ gnupg.name }}'
+
+- name: Kill any running agent
+  shell: gpgconf --kill all
+
+- name: Delete the backup directory for this key
+  file:
+    path: '{{ backup_dir }}/{{ gnupg.name }}/'
+    state: absent
+
+- name: Remove the gnupg folder
+  file:
+    path: '{{ gpg_folder }}'
+    state: absent

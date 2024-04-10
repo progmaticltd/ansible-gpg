@@ -1,0 +1,12 @@
+---
+
+- name: Backup the keys on an external drive
+  hosts: localhost
+  vars:
+    backup_dir: '{{ playbook_dir }}/../backup'
+    user: '{{ lookup("env", "USER") }}'
+  vars_files:
+    - '{{ playbook_dir }}/../config/settings.yml'
+  roles:
+    - name: Prepare the drive configured
+      role: prepare-drive

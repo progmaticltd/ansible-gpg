@@ -1,0 +1,9 @@
+---
+
+- name: Install the required packages
+  gather_facts: false
+  hosts: localhost
+  become: true
+  roles:
+    - name: Install the required packages
+      role: packages

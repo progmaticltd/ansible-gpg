@@ -1,0 +1,85 @@
+---
+
+- name: Create the second LUKS encrypted partition
+  delegate_to: local_sudo
+  community.general.parted:
+    device: '{{ disk_device }}'
+    label: gpt
+    fs_type: ext4
+    name: gnupg-private
+    part_start: 10%
+    part_end: 20%
+    number: 2
+    part_type: primary
+    state: present
+
+- name: Create LUKS container
+  delegate_to: local_sudo
+  community.crypto.luks_device:
+    device: '{{ disk_device }}2'
+    passphrase: '{{ luks_passphrase }}'
+    type: luks2
+    state: opened
+    name: gnupg-private
+
+- name: Create the filesystem for the public data
+  delegate_to: local_sudo
+  community.general.filesystem:
+    dev: /dev/mapper/gnupg-private
+    fstype: ext4
+    state: present
+    force: true
+    opts: '-L gnupg-private'
+
+- name: Mount the partition
+  delegate_to: local_sudo
+  ansible.posix.mount:
+    src: /dev/mapper/gnupg-private
+    fstype: ext4
+    path: /media/{{ user }}/gnupg-private
+    state: ephemeral
+    opts: sync
+
+- name: Set the permissions of the public folder
+  delegate_to: local_sudo
+  file:
+    path: /media/{{ user }}/gnupg-private
+    owner: '{{ user }}'
+    group: '{{ user }}'
+    mode: '0700'
+
+- name: Create the directory for this key
+  delegate_to: local_sudo
+  file:
+    path: /media/{{ user }}/gnupg-private/{{ gnupg.name }}
+    state: directory
+    owner: '{{ user }}'
+    group: '{{ user }}'
+    mode: '0700'
+
+- name: Copy the private files
+  delegate_to: local_sudo
+  copy:
+    src: '{{ backup_dir }}/{{ gnupg.name }}/{{ file }}'
+    dest: /media/{{ user }}/gnupg-private/{{ gnupg.name }}/{{ file }}
+    owner: '{{ user }}'
+    group: '{{ user }}'
+  loop: '{{ private_files }}'
+  loop_control:
+    loop_var: file
+
+- name: Unmount the partition
+  delegate_to: local_sudo
+  ansible.posix.mount:
+    src: /dev/mapper/gnupg-private
+    path: /media/{{ user }}/gnupg-private
+    state: unmounted
+
+- name: Close LUKS container
+  delegate_to: local_sudo
+  community.crypto.luks_device:
+    device: '{{ disk_device }}2'
+    passphrase: '{{ luks_passphrase }}'
+    type: luks2
+    state: closed
+    name: gnupg-private

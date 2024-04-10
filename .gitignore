@@ -1,0 +1,8 @@
+# Do not add backup files to the repository!
+backup/*
+!backup/README.md
+
+# Do not add config files to the repository!
+config/*
+!config/*-example.yml
+!config/README.md

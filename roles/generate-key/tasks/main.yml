@@ -1,0 +1,29 @@
+---
+
+- name: Load the facts
+  include_tasks:
+    file: facts.yml
+
+- name: Setup the GPG directory
+  include_tasks:
+    file: setup-dir.yml
+
+- name: Create or load the passphrase
+  include_tasks:
+    file: passphrase.yml
+
+- name: Create or load and backup the certify key
+  include_tasks:
+    file: certify-key.yml
+
+- name: Create or load and backup the sub keys
+  include_tasks:
+    file: sub-keys.yml
+
+- name: Backup the public key
+  include_tasks:
+    file: public-key.yml
+
+- name: Export and configure the SSH key
+  include_tasks:
+    file: ssh-key.yml

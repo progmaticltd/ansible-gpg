@@ -1,0 +1,16 @@
+---
+
+- name: Generate the GPG key
+  hosts: localhost
+  vars:
+    backup_dir: '{{ playbook_dir }}/../backup/'
+  vars_files:
+    - '{{ playbook_dir }}/../config/settings.yml'
+  become: false
+  roles:
+    - name: Prepare the user account
+      role: user-account
+      tags: user-account
+    - name: Generate the key
+      role: generate-key
+      tags: gpg-key

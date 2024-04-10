@@ -1,0 +1,69 @@
+---
+
+- name: List secret keys
+  register: secret_keys_list_cmd
+  shell: gpg --list-secret-keys
+  changed_when: false
+
+- name: Store the facts about the secret keys
+  set_fact:
+    signing_key_exists: '{{ "[S]" in secret_keys_list_cmd.stdout }}'
+    encrypt_key_exists: '{{ "[E]" in secret_keys_list_cmd.stdout }}'
+    auth_key_exists: '{{ "[A]" in secret_keys_list_cmd.stdout }}'
+
+- name: Create the signing sub-key
+  when: not signing_key_exists
+  shell: >-
+    gpg --batch --pinentry-mode=loopback
+    --passphrase {{ certify_pass | quote }}
+    --quick-add-key {{ key_fpr }}
+    {{ gnupg.key_types["sign"] }}
+    sign {{ gnupg.expiry }}
+  changed_when: true
+
+- name: Create the encryption sub-key
+  when: not encrypt_key_exists
+  shell: >-
+    gpg --batch --pinentry-mode=loopback
+    --passphrase {{ certify_pass | quote }}
+    --quick-add-key {{ key_fpr }}
+    {{ gnupg.key_types["encrypt"] }}
+    encrypt {{ gnupg.expiry }}
+  changed_when: true
+
+- name: Create the authentication sub-key
+  when: not auth_key_exists
+  shell: >-
+    gpg --batch --pinentry-mode=loopback
+    --passphrase {{ certify_pass | quote }}
+    --quick-add-key {{ key_fpr }}
+    {{ gnupg.key_types["auth"] }}
+    auth {{ gnupg.expiry }}
+  changed_when: true
+
+- name: Backup the sub keys
+  shell: >-
+    gpg --output {{ export_folder }}/subkeys.key
+    --batch --pinentry-mode=loopback --passphrase {{ certify_pass | quote }}
+    --armor --export-secret-subkeys {{ key_id }}
+  args:
+    creates: '{{ export_folder }}/subkeys.key'
+
+- name: Create the file for sub keys paper backup
+  shell: >-
+    cat subkeys.key
+    | gpg --dearmor
+    | paperkey > subkeys-paper.txt
+  args:
+    chdir: '{{ export_folder }}'
+    creates: subkeys-paper.txt
+
+- name: Create the QR code file for sub keys paper backup
+  shell: >-
+    cat subkeys.key
+    | gpg --dearmor
+    | paperkey --output-type raw
+    | qrencode --8bit --output subkeys-qr.png
+  args:
+    chdir: '{{ export_folder }}'
+    creates: subkeys-qr.png

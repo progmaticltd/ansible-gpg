@@ -1,0 +1,25 @@
+---
+
+- name: Include the tasks
+  include_tasks:
+    file: facts.yml
+
+- name: Create a passphrase for LUKS
+  include_tasks:
+    file: luks-passphrase.yml
+
+- name: Detect the new drive
+  include_tasks:
+    file: detect-drive.yml
+
+- name: Remove all the partitions from the drive
+  include_tasks:
+    file: drive-erase.yml
+
+- name: Create a first partition and copy the public data
+  include_tasks:
+    file: drive-public-partition.yml
+
+- name: Create a second partition and copy the private data
+  include_tasks:
+    file: drive-private-partition.yml

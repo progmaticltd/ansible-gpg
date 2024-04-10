@@ -1,0 +1,6 @@
+---
+
+# Packages to install locally
+packages:
+  - gnupg2
+  - xkcdpass

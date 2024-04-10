@@ -1,0 +1,7 @@
+---
+
+- name: Load the facts
+  set_fact:
+    home_folder: '{{ lookup("env", "HOME") }}'
+    gpg_folder: '{{ lookup("env", "HOME") }}/.gnupg'
+    export_folder: '{{ backup_dir }}/{{ gnupg.name }}'

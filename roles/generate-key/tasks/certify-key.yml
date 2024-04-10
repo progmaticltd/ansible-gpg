@@ -1,0 +1,57 @@
+---
+
+- name: Check if the key has been already created
+  register: list_keys_cmd
+  shell: gpg --list-keys
+  changed_when: false
+
+- name: Store the fact
+  set_fact:
+    create_key: '{{ list_keys_cmd.stdout == "" }}'
+
+- name: Create the certify key
+  when: create_key
+  shell: >-
+    gpg2 --batch --expert
+    --passphrase {{ certify_pass | quote }}
+    --quick-gen-key {{ gnupg.identity | quote }}
+    {{ gnupg.key_types["cert"] }}
+    cert never
+  changed_when: true
+
+- name: Get the key information
+  register: key_info
+  shell: gpg -k --with-colons {{ gnupg.identity | quote }}
+  changed_when: false
+
+- name: Get the key ID
+  set_fact:
+    key_id: '{{ key_info.stdout_lines[1].split(":")[4] }}'
+    key_fpr: '{{ key_info.stdout_lines[2].split(":")[9] }}'
+
+- name: Backup the certify key
+  shell: >-
+    gpg --output {{ export_folder }}/certify.key
+    --batch --pinentry-mode=loopback --passphrase {{ certify_pass | quote }}
+    --armor --export-secret-keys {{ key_id }}
+  args:
+    creates: '{{ export_folder }}/certify.key'
+
+- name: Create the file for certify key paper backup
+  shell: >-
+    cat certify.key
+    | gpg --dearmor
+    | paperkey > certify-key-paper.txt
+  args:
+    chdir: '{{ export_folder }}'
+    creates: certify-key-paper.txt
+
+- name: Create the QR code file for certify key paper backup
+  shell: >-
+    cat certify.key
+    | gpg --dearmor
+    | paperkey --output-type raw
+    | qrencode --8bit --output certify-key-qr.png
+  args:
+    chdir: '{{ export_folder }}'
+    creates: certify-key-qr.png

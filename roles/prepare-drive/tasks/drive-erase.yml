@@ -1,0 +1,29 @@
+---
+
+- name: Check the current partitions table
+  register: disk_info
+  delegate_to: local_sudo
+  community.general.parted:
+    device: '{{ disk_device }}'
+    state: info
+
+- name: Set the partition names we want
+  set_fact:
+    required_part_names:
+      - '{{ gnupg.name }}-public'
+      - '{{ gnupg.name }}-private'
+
+- name: Check that the first two partitions are correct
+  delegate_to: local_sudo
+  community.general.parted:
+    device: '{{ disk_device }}'
+    label: gpt
+    fs_type: ext4
+    number: '{{ part.num }}'
+    state: >-
+      {{ (part.name == required_part_names[ansible_loop.index0])
+      | ternary("present", "absent") }}
+  loop: '{{ disk_info.partitions[0:2] }}'
+  loop_control:
+    loop_var: part
+    extended: true

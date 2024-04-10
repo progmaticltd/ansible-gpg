@@ -1,0 +1,27 @@
+---
+
+# For key types, see https://www.gnupg.org/documentation/manuals/gnupg/OpenPGP-Key-Management.html
+
+gnupg:
+
+  # Short name to identify the key.
+  # It will be used for the folder names on the GPG key
+  name: blackmarket-2024
+
+  # Identity
+  identity: Archibald Hilton <archibald.hilton@villains.associates>
+
+  # Key types. You can use RSA too
+  key_types:
+    cert: ed25519
+    sign: ed25519
+    encrypt: cv25519
+    auth: ed25519
+
+  # Default expiration duration or exact date
+  expiry: 2y
+
+
+# Passphrase generation parameters
+passprase:
+  gen_command: xkcdpass

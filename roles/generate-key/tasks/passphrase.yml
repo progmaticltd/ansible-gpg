@@ -1,0 +1,14 @@
+---
+
+- name: Generate a random pass phrase
+  shell: >-
+    {{ passprase.gen_command }}
+    > {{ backup_dir }}/{{ gnupg.name }}/certify-key-passphrase
+  args:
+    creates: '{{ backup_dir }}/{{ gnupg.name }}/certify-key-passphrase'
+
+- name: Load the certify-key passphrase
+  set_fact:
+    certify_pass: >-
+      {{ lookup("password", backup_dir + "/" + gnupg.name
+      + "/certify-key-passphrase") }}
