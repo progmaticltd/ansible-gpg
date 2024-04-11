@@ -1,0 +1,10 @@
+---
+
+private_files:
+  - certify-key-paper.txt
+  - certify-key-passphrase
+  - certify-key-qr.png
+  - certify.key
+  - subkeys-paper.txt
+  - subkeys-qr.png
+  - subkeys.key

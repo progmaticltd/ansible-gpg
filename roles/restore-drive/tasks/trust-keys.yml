@@ -1,0 +1,15 @@
+---
+
+- name: List the keys to trust
+  register: trust_keys_list_cmd
+  shell: >-
+    gpg --list-keys --fingerprint --with-colons
+    | sed -E -n -e 's/^fpr:::::::::([0-9A-F]+):$/\1:6:/p'
+  changed_when: true
+
+- name: Trust the keys
+  register: trust_keys_list_cmd
+  shell:
+    cmd: gpg --import-ownertrust
+    stdin: '{{ trust_keys_list_cmd.stdout }}'
+  changed_when: true

@@ -5,6 +5,12 @@
     path: '{{ backup_dir }}/{{ gnupg.name }}/'
     state: directory
 
+- name: Create the GPG configuration directory
+  file:
+    path: '{{ gpg_folder }}'
+    state: directory
+    mode: '0700'
+
 - name: Deploy GPG configuration
   template:
     src: gpg.conf

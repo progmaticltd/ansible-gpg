@@ -10,7 +10,9 @@
 
 - name: Store the backup drive if already present
   set_fact:
-    device_name: '{{ device.name if device.children[0].label == "gnupg-public" else device_name }}'
+    device_name: >-
+      {{ device.name if device.children[0].label | default(None)
+      == "gnupg-public" else device_name }}
   loop: '{{ all_drives.blockdevices }}'
   loop_control:
     loop_var: device

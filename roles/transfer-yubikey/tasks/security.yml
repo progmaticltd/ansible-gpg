@@ -1,0 +1,53 @@
+---
+
+- name: Create the admin pin folder
+  file:
+    path: '{{ pins_path }}'
+    state: directory
+    mode: '0700'
+  tags: security
+
+- name: Set the admin pin
+  when: admin_pin_cmd.changed
+  shell:
+    cmd: gpg --command-fd=0 --pinentry-mode=loopback --change-pin
+    stdin: |-
+      3
+      12345678
+      {{ admin_pin }}
+      {{ admin_pin }}
+      q
+  changed_when: true
+  tags: security
+
+- name: Set the user pin
+  when: user_pin_cmd.changed
+  shell:
+    cmd: gpg --command-fd=0 --pinentry-mode=loopback --change-pin
+    stdin: |-
+      1
+      123456
+      {{ user_pin }}
+      {{ user_pin }}
+      q
+  changed_when: true
+  tags: security
+
+- name: Set the key attributes
+  when: admin_pin_cmd.changed and user_pin_cmd.changed
+  shell:
+    cmd: gpg --command-fd=0 --pinentry-mode=loopback --edit-card
+    stdin: |-
+      admin
+      login
+      {{ gnupg.identity }}
+      {{ admin_pin }}
+      quit
+  changed_when: true
+  tags: security
+
+- name: Set the number of retries
+  when: admin_pin_cmd.changed and user_pin_cmd.changed
+  shell: ykman openpgp access set-retries 10 10 10 -f -a {{ admin_pin }}
+  changed_when: true
+  tags: security

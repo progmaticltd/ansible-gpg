@@ -1,0 +1,40 @@
+---
+
+- name: Transfer the certify key
+  shell:
+    cmd: gpg --command-fd=0 --pinentry-mode=loopback --edit-key {{ gnupg.identity | quote }}
+    stdin: |-
+      key 1
+      keytocard
+      1
+      {{ certify_key_passphrase }}
+      {{ admin_pin }}
+      save
+  changed_when: true
+  tags: transfer
+
+- name: Transfer the encryption key
+  shell:
+    cmd: gpg --command-fd=0 --pinentry-mode=loopback --edit-key {{ gnupg.identity | quote }}
+    stdin: |-
+      key 2
+      keytocard
+      2
+      {{ certify_key_passphrase }}
+      {{ admin_pin }}
+      save
+  changed_when: true
+  tags: transfer
+
+- name: Transfer the authentication key
+  shell:
+    cmd: gpg --command-fd=0 --pinentry-mode=loopback --edit-key {{ gnupg.identity | quote }}
+    stdin: |-
+      key 3
+      keytocard
+      3
+      {{ certify_key_passphrase }}
+      {{ admin_pin }}
+      save
+  changed_when: true
+  tags: transfer

@@ -1,0 +1,35 @@
+---
+
+- name: Get Yubikey serial
+  set_fact:
+    ykserial: '{{ lookup("pipe", "ykinfo -s -q") }}'
+  tags: facts
+
+- name: Create the Yubikey’s pins path
+  set_fact:
+    pins_path: '{{ backup_dir }}/{{ gnupg.name }}/yubikey-{{ ykserial }}'
+    private_path: '{{ backup_dir }}/{{ gnupg.name }}/private'
+  tags: facts
+
+- name: Create or load the admin pin
+  register: admin_pin_cmd
+  set_fact:
+    admin_pin: >-
+      {{ lookup("password",
+      pins_path+"/admin-pin", chars="0123456789", length=8) }}
+  tags: facts
+
+- name: Create or load the user pin
+  register: user_pin_cmd
+  set_fact:
+    user_pin: >-
+      {{ lookup("password",
+      pins_path+"/user-pin", chars="0123456789", length=6) }}
+  tags: facts
+
+- name: Load the certify key passphrase
+  set_fact:
+    certify_key_passphrase: >-
+      {{ lookup("password",
+      private_path + "/certify-key-passphrase") }}
+  tags: facts

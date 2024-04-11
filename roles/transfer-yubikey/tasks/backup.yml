@@ -1,0 +1,12 @@
+---
+
+- name: Stop Gnupg
+  shell: gpgconf --kill all
+  tags: backup
+
+- name: Create an archive of the GPG folder
+  archive:
+    path: '{{ home }}/.gnupg'
+    dest: '{{ home }}/.gnupg.tgz'
+    mode: '0600'
+  tags: backup

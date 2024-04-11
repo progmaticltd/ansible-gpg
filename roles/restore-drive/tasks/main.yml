@@ -32,3 +32,8 @@
   include_tasks:
     file: restore-gpg.yml
   tags: keys
+
+- name: Trust the imported keys
+  include_tasks:
+    file: trust-keys.yml
+  tags: trust

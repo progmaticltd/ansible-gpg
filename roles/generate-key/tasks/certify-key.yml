@@ -63,3 +63,9 @@
     chdir: '{{ export_folder }}'
     creates: certify-key-qr.png
   tags: cert
+
+- name: List the secret keys
+  register: pub_keys_list_cmd
+  shell: gpg --list-keys --with-colon
+  changed_when: false
+  tags: cert,facts

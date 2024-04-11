@@ -1,0 +1,21 @@
+---
+
+- name: Load the facts
+  include_tasks:
+    file: facts.yml
+  tags: facts
+
+- name: Set pin and security options
+  include_tasks:
+    file: security.yml
+  tags: security
+
+- name: Backup GnuPG folder configuration
+  include_tasks:
+    file: backup.yml
+  tags: backup
+
+- name: Transfer the keys on the Yubikey
+  include_tasks:
+    file: transfer.yml
+  tags: transfer
