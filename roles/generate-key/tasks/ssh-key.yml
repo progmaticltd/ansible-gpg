@@ -6,3 +6,42 @@
     {{ export_folder }}/ssh-public-key.pub
   args:
     creates: '{{ export_folder }}/ssh-public-key.pub'
+  tags: ssh
+
+- name: Get the secret keys list
+  register: secret_keys_list_cmd
+  shell: >-
+    gpg --list-secret-keys --with-keygrip
+    | grep -A 1 '\[A\]'
+    | grep Keygrip
+  changed_when: false
+  tags: ssh
+
+- name: Store the authentication secret key
+  set_fact:
+    auth_keys_grip: '{{ secret_keys_list_cmd.stdout | regex_replace(".*Keygrip = ", "") }}'
+  tags: ssh
+
+- name: Check if an sshcontrol file already exists
+  register: sshcontrol_file
+  stat:
+    path: '{{ lookup("env", "HOME") }}/.gnupg/sshcontrol'
+  tags: ssh
+
+- name: Create a new sshcontrol file
+  when: not sshcontrol_file.stat.exists
+  template:
+    src: sshcontrol.conf
+    dest: '{{ lookup("env", "HOME") }}/.gnupg/sshcontrol'
+    mode: '0600'
+  tags: ssh
+
+- name: Add this line to the sshcontrol file
+  when: sshcontrol_file.stat.exists
+  lineinfile:
+    path: '{{ lookup("env", "HOME") }}/.gnupg/sshcontrol'
+    line: '{{ auth_keys_grip }}'
+    insertafter: '^#.*'
+    state: present
+    create: true
+  tags: ssh

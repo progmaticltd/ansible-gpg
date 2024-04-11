@@ -4,8 +4,10 @@
   file:
     path: '{{ backup_dir }}/{{ gnupg.name }}/'
     state: directory
+  tags: gpgconf
 
 - name: Deploy GPG configuration
   template:
     src: gpg.conf
     dest: '{{ gpg_folder }}/gpg.conf'
+  tags: gpgconf

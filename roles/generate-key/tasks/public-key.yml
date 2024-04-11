@@ -6,3 +6,4 @@
     --armor --export {{ key_id }}
   args:
     creates: '{{ export_folder }}/public-key.asc'
+  tags: pub

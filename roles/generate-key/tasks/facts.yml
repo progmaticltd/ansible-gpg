@@ -5,3 +5,4 @@
     home_folder: '{{ lookup("env", "HOME") }}'
     gpg_folder: '{{ lookup("env", "HOME") }}/.gnupg'
     export_folder: '{{ backup_dir }}/{{ gnupg.name }}'
+  tags: facts

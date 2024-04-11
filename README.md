@@ -2,6 +2,8 @@
 
 A powerful, complete and easy to use GPG key generation using Ansible locally.
 
+**🚧 This is an early stage of the project, expect changes and issues.**
+
 
 ## What the playbook is doing
 

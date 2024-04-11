@@ -4,10 +4,12 @@
   register: list_keys_cmd
   shell: gpg --list-keys
   changed_when: false
+  tags: cert,facts
 
 - name: Store the fact
   set_fact:
     create_key: '{{ list_keys_cmd.stdout == "" }}'
+  tags: cert,facts
 
 - name: Create the certify key
   when: create_key
@@ -18,16 +20,19 @@
     {{ gnupg.key_types["cert"] }}
     cert never
   changed_when: true
+  tags: cert
 
 - name: Get the key information
   register: key_info
   shell: gpg -k --with-colons {{ gnupg.identity | quote }}
   changed_when: false
+  tags: cert,facts
 
 - name: Get the key ID
   set_fact:
     key_id: '{{ key_info.stdout_lines[1].split(":")[4] }}'
     key_fpr: '{{ key_info.stdout_lines[2].split(":")[9] }}'
+  tags: cert,facts
 
 - name: Backup the certify key
   shell: >-
@@ -36,6 +41,7 @@
     --armor --export-secret-keys {{ key_id }}
   args:
     creates: '{{ export_folder }}/certify.key'
+  tags: cert
 
 - name: Create the file for certify key paper backup
   shell: >-
@@ -45,6 +51,7 @@
   args:
     chdir: '{{ export_folder }}'
     creates: certify-key-paper.txt
+  tags: cert
 
 - name: Create the QR code file for certify key paper backup
   shell: >-
@@ -55,3 +62,4 @@
   args:
     chdir: '{{ export_folder }}'
     creates: certify-key-qr.png
+  tags: cert
