@@ -1,0 +1,16 @@
+---
+
+- name: Generate a random pass phrase
+  set_fact:
+    luks_passphrase_path: '{{ backup_dir }}/{{ gnupg.name }}/private/luks-passphrase'
+
+- name: Generate a random pass phrase
+  shell: >-
+    {{ passprase.gen_command }}
+    > {{ luks_passphrase_path }}
+  args:
+    creates: '{{ luks_passphrase_path }}'
+
+- name: Load the luks passphrase
+  set_fact:
+    luks_passphrase: '{{ lookup("password", luks_passphrase_path) }}'

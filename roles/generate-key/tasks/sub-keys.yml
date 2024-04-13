@@ -48,18 +48,18 @@
 
 - name: Backup the sub keys
   shell: >-
-    gpg --output {{ export_folder }}/subkeys.key
+    gpg --output {{ export_folder }}/private/subkeys.key
     --batch --pinentry-mode=loopback --passphrase {{ certify_pass | quote }}
     --armor --export-secret-subkeys {{ key_id }}
   args:
-    creates: '{{ export_folder }}/subkeys.key'
+    creates: '{{ export_folder }}/private/subkeys.key'
   tags: subkeys
 
 - name: Create the file for sub keys paper backup
   shell: >-
-    cat subkeys.key
+    cat private/subkeys.key
     | gpg --dearmor
-    | paperkey > subkeys-paper.txt
+    | paperkey > private/subkeys-paper.txt
   args:
     chdir: '{{ export_folder }}'
     creates: subkeys-paper.txt
@@ -67,10 +67,10 @@
 
 - name: Create the QR code file for sub keys paper backup
   shell: >-
-    cat subkeys.key
+    cat private/subkeys.key
     | gpg --dearmor
     | paperkey --output-type raw
-    | qrencode --8bit --output subkeys-qr.png
+    | qrencode --8bit --output private/subkeys-qr.png
   args:
     chdir: '{{ export_folder }}'
     creates: subkeys-qr.png

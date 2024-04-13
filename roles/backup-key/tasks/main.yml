@@ -27,3 +27,7 @@
 - name: Restart drive automount if stopped
   include_tasks:
     file: drive-automount.yml
+
+- name: Mark the key as backed-up and can be deleted if needed
+  include_tasks:
+    file: mark-backup-finished.yml

@@ -9,4 +9,4 @@
     - '{{ playbook_dir }}/../config/settings.yml'
   roles:
     - name: Prepare the drive configured
-      role: backup-drive
+      role: backup-key

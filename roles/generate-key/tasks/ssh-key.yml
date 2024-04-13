@@ -3,9 +3,9 @@
 - name: Export the public SSH key
   shell: >-
     gpg --export-ssh-key {{ key_id }} >
-    {{ export_folder }}/ssh-public-key.pub
+    {{ export_folder }}/private/ssh-public-key.pub
   args:
-    creates: '{{ export_folder }}/ssh-public-key.pub'
+    creates: '{{ export_folder }}/private/ssh-public-key.pub'
   tags: ssh
 
 - name: Get the secret keys list

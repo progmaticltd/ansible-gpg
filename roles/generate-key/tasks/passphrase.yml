@@ -3,9 +3,9 @@
 - name: Generate a random pass phrase
   shell: >-
     {{ passprase.gen_command }}
-    > {{ backup_dir }}/{{ gnupg.name }}/certify-key-passphrase
+    > {{ backup_dir }}/{{ gnupg.name }}/private/certify-key-passphrase
   args:
-    creates: '{{ backup_dir }}/{{ gnupg.name }}/certify-key-passphrase'
+    creates: '{{ backup_dir }}/{{ gnupg.name }}/private/certify-key-passphrase'
   tags: passphrase
 
 - name: Load the certify-key passphrase

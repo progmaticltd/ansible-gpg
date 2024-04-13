@@ -1,0 +1,6 @@
+---
+
+- name: Create a file in the backup folder
+  copy:
+    content: 'Key has been backup on a drive.'
+    dest: '{{ backup_dir }}/{{ gnupg.name }}/.backup-mark'

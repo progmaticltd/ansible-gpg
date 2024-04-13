@@ -1,5 +1,16 @@
 ---
 
+# Check if the folder has been backed up before
+- name: Check if the backup mark file exists
+  register: backup_mark_file
+  stat:
+    path: '{{ backup_dir }}/{{ gnupg.name }}/.backup-mark'
+
+- name: Stop if the file has not been backup-up
+  assert:
+    that: backup_mark_file.stat.exist | default(false)
+    msg: You need to backup the key first
+
 - name: Load the facts
   set_fact:
     gpg_folder: '{{ lookup("env", "HOME") }}/.gnupg'

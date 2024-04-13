@@ -12,7 +12,7 @@ A powerful, complete and easy to use GPG key generation using Ansible locally.
 - [x] Generate QRCodes backups of your key.
 - [x] Create or maintain LUKS encrypted backup drives.
 - [x] Restore keys from LUKS encrypted backup drives.
-- [ ] Transfer the keys on a Yubikey.
+- [x] Transfer the keys on a Yubikey.
 
 
 ## Links

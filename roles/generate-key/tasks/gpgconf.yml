@@ -6,6 +6,17 @@
     state: directory
   tags: gpgconf
 
+- name: Create the backup directory for this key
+  file:
+    path: '{{ backup_dir }}/{{ gnupg.name }}/{{ dir }}'
+    state: directory
+  loop:
+    - public
+    - private
+  loop_control:
+    loop_var: dir
+  tags: gpgconf
+
 - name: Deploy GPG configuration
   template:
     src: gpg.conf

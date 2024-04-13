@@ -2,8 +2,8 @@
 
 - name: Backup the public key
   shell: >-
-    gpg --output {{ export_folder }}/public-key.asc
+    gpg --output {{ export_folder }}/public/public-key.asc
     --armor --export {{ key_id }}
   args:
-    creates: '{{ export_folder }}/public-key.asc'
+    creates: '{{ export_folder }}/public/public-key.asc'
   tags: pub
