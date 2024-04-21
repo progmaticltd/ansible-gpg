@@ -1,8 +1,21 @@
 ---
 
+- name: Get a random word of (length) letters
+  register: random_word_cmd
+  shell: >-
+    xkcdpass --min {{ gnupg.passphrase.words.min }}
+    --max {{ gnupg.passphrase.words.max }}
+    --numwords 1
+  changed_when: false
+
+- name: Save the acrostic
+  copy:
+    content: '{{ random_word_cmd.stdout }}'
+    dest: '{{ backup_dir }}/{{ gnupg.name }}/private/certify-key-acrostic'
+
 - name: Generate a random pass phrase
   shell: >-
-    {{ passprase.gen_command }}
+    xkcdpass --acrostic {{ random_word_cmd.stdout }}
     > {{ backup_dir }}/{{ gnupg.name }}/private/certify-key-passphrase
   args:
     creates: '{{ backup_dir }}/{{ gnupg.name }}/private/certify-key-passphrase'
@@ -12,5 +25,5 @@
   set_fact:
     certify_pass: >-
       {{ lookup("password", backup_dir + "/" + gnupg.name
-      + "/certify-key-passphrase") }}
+      + "/private/certify-key-passphrase") }}
   tags: passphrase,facts

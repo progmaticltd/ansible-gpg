@@ -1,7 +1,7 @@
 ---
 
 - name: Activate drives automount again
-  delegate_to: local_sudo
+  become: true
   systemd:
     name: udisks2.service
     state: started

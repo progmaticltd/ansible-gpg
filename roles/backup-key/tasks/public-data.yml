@@ -1,7 +1,7 @@
 ---
 
 - name: Create the first public data partition
-  delegate_to: local_sudo
+  become: true
   community.general.parted:
     device: '{{ disk_device }}'
     label: gpt
@@ -14,7 +14,7 @@
     state: present
 
 - name: Create the filesystem for the public data
-  delegate_to: local_sudo
+  become: true
   community.general.filesystem:
     dev: '{{ disk_device }}1'
     fstype: ext4
@@ -22,7 +22,7 @@
     opts: '-L gnupg-public'
 
 - name: Mount the partition
-  delegate_to: local_sudo
+  become: true
   ansible.posix.mount:
     src: '{{ disk_device }}1'
     fstype: ext4
@@ -31,7 +31,7 @@
     opts: sync
 
 - name: Set the permissions of the public folder
-  delegate_to: local_sudo
+  become: true
   file:
     path: /media/{{ user }}/gnupg-public
     owner: '{{ user }}'
@@ -39,7 +39,7 @@
     mode: '0755'
 
 - name: Create the directory for this key
-  delegate_to: local_sudo
+  become: true
   file:
     path: /media/{{ user }}/gnupg-public/{{ gnupg.name }}
     state: directory
@@ -48,7 +48,7 @@
     mode: '0755'
 
 - name: Copy the public key related files
-  delegate_to: local_sudo
+  become: true
   copy:
     src: '{{ backup_dir }}/{{ gnupg.name }}/{{ file }}'
     dest: /media/{{ user }}/gnupg-public/{{ gnupg.name }}/{{ file }}
@@ -62,8 +62,8 @@
     loop_var: file
 
 - name: Unmount the partition
-  delegate_to: local_sudo
+  become: true
   ansible.posix.mount:
-    src: '/dev/mapper/gnupg-public'
+    src: /dev/mapper/gnupg-public
     path: /media/{{ user }}/gnupg-public
     state: unmounted

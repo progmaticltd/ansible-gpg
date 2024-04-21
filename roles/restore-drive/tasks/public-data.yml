@@ -1,7 +1,7 @@
 ---
 
 - name: Mount the public partition
-  delegate_to: local_sudo
+  become: true
   ansible.posix.mount:
     src: '{{ disk_device }}1'
     fstype: ext4
@@ -26,7 +26,7 @@
     loop_var: file
 
 - name: Unmount the partition
-  delegate_to: local_sudo
+  become: true
   ansible.posix.mount:
     src: '/dev/mapper/gnupg-public'
     path: /media/{{ user }}/gnupg-public

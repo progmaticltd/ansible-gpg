@@ -2,7 +2,7 @@
 
 - name: Check the current partitions table
   register: disk_info
-  delegate_to: local_sudo
+  become: true
   community.general.parted:
     device: '{{ disk_device }}'
     state: info
@@ -23,7 +23,7 @@
     part2_rm: '{{ part2_name is defined and part2_name != "gnupg-private" }}'
 
 - name: Delete the first partition
-  delegate_to: local_sudo
+  become: true
   when: part1_rm or part2_rm
   community.general.parted:
     device: '{{ disk_device }}'

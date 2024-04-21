@@ -1,7 +1,7 @@
 ---
 
 - name: Open the LUKS container
-  delegate_to: local_sudo
+  become: true
   community.crypto.luks_device:
     device: '{{ disk_device }}2'
     passphrase: '{{ luks_passphrase }}'
@@ -10,7 +10,7 @@
     name: gnupg-private
 
 - name: Mount the partition
-  delegate_to: local_sudo
+  become: true
   ansible.posix.mount:
     src: /dev/mapper/gnupg-private
     fstype: ext4
@@ -29,14 +29,14 @@
     loop_var: file
 
 - name: Unmount the partition
-  delegate_to: local_sudo
+  become: true
   ansible.posix.mount:
     src: /dev/mapper/gnupg-private
     path: /media/{{ user }}/gnupg-private
     state: unmounted
 
 - name: Close LUKS container
-  delegate_to: local_sudo
+  become: true
   community.crypto.luks_device:
     device: '{{ disk_device }}2'
     passphrase: '{{ luks_passphrase }}'

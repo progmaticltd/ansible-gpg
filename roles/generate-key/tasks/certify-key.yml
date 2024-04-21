@@ -36,11 +36,11 @@
 
 - name: Backup the certify key
   shell: >-
-    gpg --output {{ export_folder }}/certify.key
+    gpg --output {{ export_folder }}/private/certify.key
     --batch --pinentry-mode=loopback --passphrase {{ certify_pass | quote }}
     --armor --export-secret-keys {{ key_id }}
   args:
-    creates: '{{ export_folder }}/certify.key'
+    creates: '{{ export_folder }}/private/certify.key'
   tags: cert
 
 - name: Create the file for certify key paper backup
@@ -49,7 +49,7 @@
     | gpg --dearmor
     | paperkey > certify-key-paper.txt
   args:
-    chdir: '{{ export_folder }}'
+    chdir: '{{ export_folder }}/private'
     creates: certify-key-paper.txt
   tags: cert
 
@@ -60,7 +60,7 @@
     | paperkey --output-type raw
     | qrencode --8bit --output certify-key-qr.png
   args:
-    chdir: '{{ export_folder }}'
+    chdir: '{{ export_folder }}/private'
     creates: certify-key-qr.png
   tags: cert
 

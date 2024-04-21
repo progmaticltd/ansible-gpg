@@ -1,0 +1,6 @@
+---
+
+- name: Install the required packages
+  become: true
+  apt:
+    name: '{{ packages }}'

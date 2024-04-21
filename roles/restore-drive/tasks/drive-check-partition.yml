@@ -2,7 +2,7 @@
 
 - name: Check the current partitions table
   register: disk_info
-  delegate_to: local_sudo
+  become: true
   community.general.parted:
     device: '{{ disk_device }}'
     state: info

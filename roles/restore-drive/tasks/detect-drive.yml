@@ -18,7 +18,7 @@
     loop_var: device
 
 - name: Prevent drives automount
-  delegate_to: local_sudo
+  become: true
   systemd:
     name: udisks2.service
     state: stopped

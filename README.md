@@ -15,6 +15,18 @@ A powerful, complete and easy to use GPG key generation using Ansible locally.
 - [x] Transfer the keys on a Yubikey.
 - [x] Create a PDF document ready to be printed.
 
+## Playbooks
+
+| Playbook     | Description                                                     |
+|--------------|-----------------------------------------------------------------|
+| main.yml     | Main playbook to generate a key                                 |
+| backup.yml   | Backup the key on a usb drive encrypted with luks               |
+| print.yml    | Create a PDF with all the information needed to restore the key |
+| restore.yml  | Restore the key from a backup drive                             |
+| yubikey.yml  | Copy the private keys on a yubikey and configure GPG            |
+| yubikey.yml  | Copy the private keys on a yubikey and configure GPG            |
+| packages.yml | Install the packges required                                    |
+
 ## Links
 
 Some links that I have used to create this project.

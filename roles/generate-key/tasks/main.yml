@@ -5,6 +5,11 @@
     file: facts.yml
   tags: facts
 
+- name: Install the required packages
+  include_tasks:
+    file: packages.yml
+  tags: apt
+
 - name: Setup the GPG directory
   include_tasks:
     file: gpgconf.yml
