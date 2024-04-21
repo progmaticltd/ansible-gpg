@@ -58,11 +58,27 @@
   set_fact:
     subkeys_paper_lines: '{{ subkeys_paper.splitlines() | reject("contains", "#") }}'
 
-
 - name: Check if there is a luks passphrase saved
   register: luks_passphrase_file
   stat:
     path: '{{ backup_dir }}/{{ gnupg.name }}/private/luks-passphrase'
+
+- name: Load all the Yubikey folders
+  register: yubikey_folders
+  find:
+    path: '{{ backup_dir }}/{{ gnupg.name }}/'
+    pattern: 'yubikey-*'
+    file_type: directory
+
+- name: Set array to store yubikeys keys info
+  set_fact:
+    yubikeys: [ ]
+
+- name: Load all the Yubikey informations
+  include_tasks: load-yubikey.yml
+  loop: '{{ yubikey_folders.files }}'
+  loop_control:
+    loop_var: yubikey
 
 - name: Load luks drive passphrase
   when: luks_passphrase_file.stat.exists

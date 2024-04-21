@@ -46,6 +46,26 @@ QR Code
 .. image:: ./subkeys-qr.png
    :width: 60%
 
+{% if yubikeys | length > 0 %}
+
+.. raw:: pdf
+
+    PageBreak
+
+Yubikeys
+---------------
+
+{% for ykinfo in yubikeys %}
+
+Yubikey #{{ ykinfo.serial }}
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Admin PIN: ``{{ ykinfo.admin_pin }}``
+- User PIN: ``{{ ykinfo.user_pin }}``
+
+{% endfor %}
+{% endif %}
+
 {% if luks_passphrase is defined %}
 LUKS passphrase
 ---------------

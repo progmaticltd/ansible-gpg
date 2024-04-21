@@ -1,0 +1,26 @@
+---
+
+- name: Get serial
+  set_fact:
+    serial: '{{ yubikey.path | basename | split("-") | last }}'
+
+- name: Load admin pin
+  register: admin_file_slurp
+  slurp:
+    path: '{{ yubikey.path }}/admin-pin'
+
+- name: Load user pin
+  register: user_file_slurp
+  slurp:
+    path: '{{ yubikey.path }}/user-pin'
+
+- name: Set yubikey info
+  set_fact:
+    yubikey_info:
+      serial: '{{ serial }}'
+      admin_pin: '{{ admin_file_slurp["content"] | b64decode }}'
+      user_pin: '{{ user_file_slurp["content"] | b64decode }}'
+
+- name: Append the yubikey info
+  set_fact:
+    yubikeys: '{{ yubikeys + [ yubikey_info ] }}'
