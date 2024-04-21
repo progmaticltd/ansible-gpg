@@ -3,7 +3,7 @@
 - name: Restore the generated GPG key
   hosts: localhost
   vars:
-    backup_dir: '{{ playbook_dir }}/../backup/'
+    backup_dir: '{{ playbook_dir }}/../backup'
   vars_prompt:
     - name: luks_passphrase
       prompt: Please, enter the LUKS passphrase

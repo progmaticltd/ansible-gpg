@@ -5,4 +5,6 @@ backup/*
 # Do not add config files to the repository!
 config/*
 !config/*-example.yml
+!config/ansible.cfg
+!config/hosts.yml
 !config/README.md

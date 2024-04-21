@@ -2,7 +2,10 @@
 
 - name: Transfer the certify key
   shell:
-    cmd: gpg --command-fd=0 --pinentry-mode=loopback --edit-key {{ gnupg.identity | quote }}
+    cmd: >-
+      gpg --command-fd=0
+      --pinentry-mode=loopback
+      --edit-key {{ gnupg.identity | quote }}
     stdin: |-
       key 1
       keytocard
@@ -15,7 +18,10 @@
 
 - name: Transfer the encryption key
   shell:
-    cmd: gpg --command-fd=0 --pinentry-mode=loopback --edit-key {{ gnupg.identity | quote }}
+    cmd: >-
+      gpg --command-fd=0
+      --pinentry-mode=loopback
+      --edit-key {{ gnupg.identity | quote }}
     stdin: |-
       key 2
       keytocard
@@ -28,7 +34,10 @@
 
 - name: Transfer the authentication key
   shell:
-    cmd: gpg --command-fd=0 --pinentry-mode=loopback --edit-key {{ gnupg.identity | quote }}
+    cmd: >-
+      gpg --command-fd=0
+      --pinentry-mode=loopback
+      --edit-key {{ gnupg.identity | quote }}
     stdin: |-
       key 3
       keytocard

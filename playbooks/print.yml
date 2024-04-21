@@ -1,6 +1,6 @@
 ---
 
-- name: Destroy the generated GPG key
+- name: Generte a PDF document to print with the key details
   hosts: localhost
   vars:
     backup_dir: '{{ playbook_dir }}/../backup'
@@ -8,6 +8,6 @@
     - '{{ playbook_dir }}/../config/settings.yml'
   become: false
   roles:
-    - name: Destroy the generated key
-      role: destroy-key
-      tags: gpg-key
+    - name: Create a PDF document to print
+      role: print-backup
+      tags: print-backup

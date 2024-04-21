@@ -1,0 +1,73 @@
+---
+
+- name: Set the export path
+  set_fact:
+    export_path: '{{ backup_dir }}/{{ gnupg.name }}/private/'
+
+- name: Set the user permissions
+  file:
+    path: '{{ export_path }}'
+    state: directory
+    mode: '0700'
+
+- name: Load certify key paper version
+  register: certify_key_slurp
+  slurp:
+    path: '{{ backup_dir }}/{{ gnupg.name }}/private/certify-key-paper.txt'
+
+- name: Store certify key paper version
+  register: certify_key_passphrase_slurp
+  slurp:
+    path: '{{ backup_dir }}/{{ gnupg.name }}/private/certify-key-passphrase'
+
+- name: Store the certify key passphrase
+  set_fact:
+    certify_key_passphrase: >-
+      {{ certify_key_passphrase_slurp["content"] | b64decode }}
+
+- name: Store the certify key paper version
+  set_fact:
+    certify_key_paper: >-
+      {{ certify_key_slurp["content"] | b64decode }}
+
+- name: Store the certify key paper version lines
+  set_fact:
+    certify_key_paper_lines: '{{ certify_key_paper.splitlines() | reject("contains", "#") }}'
+
+- name: Load subkeys paper version
+  register: subkeys_slurp
+  slurp:
+    path: '{{ backup_dir }}/{{ gnupg.name }}/private/subkeys-paper.txt'
+
+- name: Store the subkeys paper version
+  set_fact:
+    subkeys_paper: >-
+      {{ subkeys_slurp["content"] | b64decode }}
+
+- name: Store the subkeys paper version lines
+  set_fact:
+    subkeys_paper_lines: '{{ subkeys_paper.splitlines() | reject("contains", "#") }}'
+
+
+- name: Load luks drive passphrase
+  register: luks_passphrase_slurp
+  slurp:
+    path: '{{ backup_dir }}/{{ gnupg.name }}/private/luks-passphrase'
+
+- name: Store the luks passphrase
+  set_fact:
+    luks_passphrase: '{{ luks_passphrase_slurp["content"] | b64decode }}'
+
+- name: Template the rst document
+  register: rst_file
+  template:
+    src: backup.rst
+    dest: '{{ export_path }}/backup.rst'
+
+- name: Build the PDF
+  when: rst_file.changed
+  shell:
+    cmd: rst2pdf backup.rst -o backup.pdf
+  args:
+    chdir: '{{ export_path }}'
+  changed_when: true

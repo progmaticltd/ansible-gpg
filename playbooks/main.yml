@@ -3,7 +3,7 @@
 - name: Generate the GPG key
   hosts: localhost
   vars:
-    backup_dir: '{{ playbook_dir }}/../backup/'
+    backup_dir: '{{ playbook_dir }}/../backup'
   vars_files:
     - '{{ playbook_dir }}/../config/settings.yml'
   become: false
