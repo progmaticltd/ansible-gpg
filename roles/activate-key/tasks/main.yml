@@ -5,6 +5,11 @@
     home_folder: '{{ lookup("env", "HOME") }}'
   tags: activate
 
+- name: Store the primary secret key ID
+  set_fact:
+    gpg_dir: '{{ home_folder }}/.gnupg-{{ gnupg.name }}'
+  tags: activate
+
 - name: Check if the default gpg folder exists
   register: gpg_folder
   stat:
@@ -12,7 +17,7 @@
   tags: activate
 
 - name: Rename the GPG folder
-  when: gpg_folder.stat.isdir
+  when: gpg_folder.stat.isdir | default(false)
   tags: activate
   block:
     - name: Store datetime
@@ -30,4 +35,26 @@
     src: '{{ home_folder }}/.gnupg-{{ gnupg.name }}'
     dest: '{{ home_folder }}/.gnupg'
     state: link
+    mode: '0700'
+    force: true
+  tags: activate
+
+- name: Get the primary secret key ID
+  register: certify_key_grip_cmd
+  shell: >-
+    gpg --list-keys --with-keygrip
+    | sed -En "s/.*Keygrip = //pg"
+  changed_when: false
+  tags: activate
+
+- name: Store the primary secret key ID
+  set_fact:
+    certify_key_grip: '{{ certify_key_grip_cmd.stdout_lines[0] }}'
+    private_keys_dir: '{{ gpg_dir }}/private-keys-v1.d/'
+  tags: activate
+
+- name: Remove the private key file
+  file:
+    path: '{{ private_keys_dir }}/{{ certify_key_grip }}.key'
+    state: absent
   tags: activate
