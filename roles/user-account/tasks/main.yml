@@ -6,14 +6,7 @@
 
 - name: Create the gnupg folder
   file:
-    path: '{{ home_folder }}/.gnupg'
+    path: '{{ home_folder }}/.gnupg-{{ gnupg.name }}'
     state: directory
     mode: '0700'
-  tags: files
-
-- name: Add a mark
-  copy:
-    content: 'This folder is managed using Ansible'
-    dest: '{{ home_folder }}/.gnupg/ansible-managed'
-    mode: '0600'
   tags: files

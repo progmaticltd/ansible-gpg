@@ -7,6 +7,8 @@
     user: '{{ lookup("env", "USER") }}'
   vars_files:
     - '{{ playbook_dir }}/../config/settings.yml'
+  environment:
+    GNUPGHOME: '{{ lookup("env", "HOME") }}/.gnupg-{{ gnupg.name }}'
   roles:
     - name: Prepare the drive configured
       role: backup-key

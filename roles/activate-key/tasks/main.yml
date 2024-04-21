@@ -1,0 +1,33 @@
+---
+
+- name: Store home folder
+  set_fact:
+    home_folder: '{{ lookup("env", "HOME") }}'
+  tags: activate
+
+- name: Check if the default gpg folder exists
+  register: gpg_folder
+  stat:
+    path: '{{ home_folder }}/.gnupg'
+  tags: activate
+
+- name: Rename the GPG folder
+  when: gpg_folder.stat.isdir
+  tags: activate
+  block:
+    - name: Store datetime
+      set_fact:
+        date: '{{ now(utc=true, fmt="%Y-%m-%d_%H:%M") }}'
+    - name: Archive the folder
+      archive:
+        path: '{{ home_folder }}/.gnupg'
+        dest: '{{ home_folder }}/gnupg-{{ date }}.tgz'
+        remove: true
+        mode: '0600'
+
+- name: Link the gnupg folder
+  file:
+    src: '{{ home_folder }}/.gnupg-{{ gnupg.name }}'
+    dest: '{{ home_folder }}/.gnupg'
+    state: link
+  tags: activate

@@ -10,7 +10,8 @@
       private: true
   vars_files:
     - '{{ playbook_dir }}/../config/settings.yml'
-  become: false
+  environment:
+    GNUPGHOME: '{{ lookup("env", "HOME") }}/.gnupg-{{ gnupg.name }}'
   roles:
     - name: restore the data from the backup drive
       role: restore-drive

@@ -8,6 +8,8 @@
     home: '{{ lookup("env", "HOME") }}'
   vars_files:
     - '{{ playbook_dir }}/../config/settings.yml'
+  environment:
+    GNUPGHOME: '{{ lookup("env", "HOME") }}/.gnupg-{{ gnupg.name }}'
   roles:
     - name: Transfer the keys on a Yubikey
       role: transfer-yubikey

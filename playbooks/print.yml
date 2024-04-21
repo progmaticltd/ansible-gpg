@@ -6,7 +6,8 @@
     backup_dir: '{{ playbook_dir }}/../backup'
   vars_files:
     - '{{ playbook_dir }}/../config/settings.yml'
-  become: false
+  environment:
+    GNUPGHOME: '{{ lookup("env", "HOME") }}/.gnupg-{{ gnupg.name }}'
   roles:
     - name: Create a PDF document to print
       role: print-backup

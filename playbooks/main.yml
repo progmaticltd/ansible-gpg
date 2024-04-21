@@ -6,11 +6,16 @@
     backup_dir: '{{ playbook_dir }}/../backup'
   vars_files:
     - '{{ playbook_dir }}/../config/settings.yml'
+  environment:
+    GNUPGHOME: '{{ lookup("env", "HOME") }}/.gnupg-{{ gnupg.name }}'
   become: false
   roles:
     - name: Prepare the user account
       role: user-account
-      tags: user-account
+      tags: user
     - name: Generate the key
       role: generate-key
-      tags: gpg-key
+      tags: key
+    - name: Activate the key
+      role: activate-key
+      tags: activate
