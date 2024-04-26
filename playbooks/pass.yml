@@ -1,0 +1,12 @@
+---
+
+- name: Initialise password store
+  hosts: localhost
+  vars_files:
+    - '{{ playbook_dir }}/../config/settings.yml'
+  environment:
+    GNUPGHOME: '{{ lookup("env", "HOME") }}/.gnupg-{{ gnupg.name }}'
+  roles:
+    - name: Initialise password store
+      role: password-store
+      tags: pass

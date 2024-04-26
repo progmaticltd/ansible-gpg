@@ -14,6 +14,7 @@ A powerful, complete and easy to use GPG key generation using Ansible locally.
 - [x] Restore keys from LUKS encrypted backup drives.
 - [x] Transfer the keys on a Yubikey.
 - [x] Create a PDF document ready to be printed.
+- [x] Initialise a password store for _pass_.
 
 
 ## Playbooks
@@ -26,6 +27,7 @@ A powerful, complete and easy to use GPG key generation using Ansible locally.
 | restore.yml  | Restore the key from a backup drive                             |
 | yubikey.yml  | Copy the private keys on a yubikey and configure GPG            |
 | yubikey.yml  | Copy the private keys on a yubikey and configure GPG            |
+| pass.yml     | Initialise password store for Linux pass utility                |
 | packages.yml | Install the packges required                                    |
 
 ## Examples

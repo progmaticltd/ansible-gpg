@@ -1,0 +1,26 @@
+---
+
+- name: Load encryption key ID
+  register: encrypt_key_id_cmd
+  shell: >-
+    gpg --list-keys --with-subkey-fingerprint
+    | grep -F -A 1 '[E]'
+    | sed -En 's/.* = //p'
+  changed_when: false
+  tags: facts
+
+- name: Store the key ID
+  set_fact:
+    encrypt_key_id: '{{ encrypt_key_id_cmd.stdout | replace(" ", "") }}'
+  tags: facts
+
+- name: Store the home folder
+  set_fact:
+    home: '{{ lookup("env", "HOME") }}'
+  tags: facts
+
+- name: Initialise the password manager
+  shell: >-
+    pass init {{ encrypt_key_id }}
+  args:
+    creates: '{{ home }}/.password-store/.gpg-id'
