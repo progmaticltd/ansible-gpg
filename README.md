@@ -15,6 +15,7 @@ A powerful, complete and easy to use GPG key generation using Ansible locally.
 - [x] Transfer the keys on a Yubikey.
 - [x] Create a PDF document ready to be printed.
 - [x] Initialise a password store for _pass_.
+- [x] Configure the SSH agent to use GPG.
 
 
 ## Playbooks
