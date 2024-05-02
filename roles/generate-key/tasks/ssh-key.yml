@@ -43,5 +43,13 @@
     line: '{{ auth_keys_grip }}'
     insertafter: '^#.*'
     state: present
+  tags: ssh
+
+- name: Update a new gpg agent configuration file file
+  lineinfile:
+    path: '{{ lookup("env", "HOME") }}/.gnupg/gpg-agent.conf'
+    line: enable-ssh-support
+    insertafter: '^#.*'
+    state: present
     create: true
   tags: ssh
