@@ -1,0 +1,20 @@
+---
+
+- name: Create the reset file for this key
+  template:
+    src: reset-key.txt
+    dest: '{{ pins_path }}/reset-key.txt'
+  tags: reset
+
+- name: Reset the Yubikey using low level commands
+  shell: >-
+    gpg-connect-agent
+    -r '{{ pins_path }}/reset-key.txt'
+  changed_when: true
+  tags: reset
+
+- name: Wait for the key to be removed
+  pause:
+    prompt: Unplug and replug the key and wait ten seconds...
+    seconds: 10
+  tags: reset

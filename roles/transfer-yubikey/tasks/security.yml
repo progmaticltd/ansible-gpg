@@ -8,7 +8,7 @@
   tags: security
 
 - name: Set the admin pin
-  when: admin_pin_cmd.changed
+  when: new_admin_pin
   shell:
     cmd: gpg --command-fd=0 --pinentry-mode=loopback --change-pin
     stdin: |-
@@ -21,7 +21,7 @@
   tags: security
 
 - name: Set the user pin
-  when: user_pin_cmd.changed
+  when: new_user_pin
   shell:
     cmd: gpg --command-fd=0 --pinentry-mode=loopback --change-pin
     stdin: |-
@@ -34,7 +34,7 @@
   tags: security
 
 - name: Set the key attributes
-  when: admin_pin_cmd.changed and user_pin_cmd.changed
+  when: new_admin_pin or new_user_pin
   shell:
     cmd: gpg --command-fd=0 --pinentry-mode=loopback --edit-card
     stdin: |-
@@ -47,7 +47,7 @@
   tags: security
 
 - name: Set the number of retries
-  when: admin_pin_cmd.changed and user_pin_cmd.changed
+  when: new_admin_pin or new_user_pin
   shell: ykman openpgp access set-retries 10 10 10 -f -a {{ admin_pin }}
   changed_when: true
   tags: security

@@ -1,11 +1,12 @@
 ---
 
-- name: Backup the keys on an external drive
+- name: Backup the keys on a Yubikey
   hosts: localhost
   vars:
     backup_dir: '{{ playbook_dir }}/../backup'
     user: '{{ lookup("env", "USER") }}'
     home: '{{ lookup("env", "HOME") }}'
+    run_sudo_tasks: false
   vars_files:
     - '{{ playbook_dir }}/../config/settings.yml'
   environment:

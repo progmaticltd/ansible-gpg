@@ -11,16 +11,36 @@
     private_path: '{{ backup_dir }}/{{ gnupg.name }}/private'
   tags: facts
 
+- name: Check if the admin pin already exists
+  register: admin_pin_file
+  stat:
+    path: '{{ pins_path }}/admin-pin'
+  tags: facts
+
+- name: Store the admin pin stat fact
+  set_fact:
+    new_admin_pin: '{{ not admin_pin_file.stat.exists }}'
+  tags: facts
+
 - name: Create or load the admin pin
-  register: admin_pin_cmd
   set_fact:
     admin_pin: >-
       {{ lookup("password",
       pins_path+"/admin-pin", chars="0123456789", length=8) }}
   tags: facts
 
+- name: Check if the user pin already exists
+  register: user_pin_file
+  stat:
+    path: '{{ pins_path }}/user-pin'
+  tags: facts
+
+- name: Store the user pin stat fact
+  set_fact:
+    new_user_pin: '{{ not user_pin_file.stat.exists }}'
+  tags: facts
+
 - name: Create or load the user pin
-  register: user_pin_cmd
   set_fact:
     user_pin: >-
       {{ lookup("password",

@@ -1,9 +1,21 @@
 ---
 
+- name: Install the required packages locally
+  when: run_sudo_tasks
+  include_tasks:
+    file: packages.yml
+  tags: apt
+
 - name: Load the facts
   include_tasks:
     file: facts.yml
   tags: facts
+
+- name: Reset the yubikey
+  when: reset_key
+  include_tasks:
+    file: reset-key.yml
+  tags: reset
 
 - name: Set pin and security options
   include_tasks:

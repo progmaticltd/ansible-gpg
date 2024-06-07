@@ -1,0 +1,7 @@
+---
+
+- name: Install the required packages
+  apt:
+    name: yubikey-personalization
+    state: present
+  tags: apt
