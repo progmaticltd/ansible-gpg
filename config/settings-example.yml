@@ -8,8 +8,10 @@ gnupg:
   # It will be used for the folder names on the GPG key
   name: blackmarket-2024
 
+
   # Identity
   identity: Archibald Hilton <archibald.hilton@villains.associates>
+
 
   # Key types. You can use RSA too
   key_types:
@@ -18,8 +20,18 @@ gnupg:
     encrypt: cv25519
     auth: ed25519
 
+
   # Default expiration duration or exact date
   expiry: 2y
+
+
+  # Passphrase generation parameters
+  passphrase:
+    words:
+      min: 5
+      max: 7
+      min_length: 4
+      max_length: 6
 
 
 # Passphrase generation parameters

@@ -4,6 +4,7 @@
   hosts: localhost
   vars:
     backup_dir: '{{ playbook_dir }}/../backup'
+    run_sudo_tasks: false
   vars_files:
     - '{{ playbook_dir }}/../config/settings.yml'
   environment:

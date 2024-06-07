@@ -2,13 +2,13 @@
 
 A powerful, complete and easy to use GPG key generation using Ansible locally.
 
-**🚧 This is an early stage of the project, expect changes and issues.**
+** 🚧 This is an early stage of the project, expect changes and issues. 🚧 **
 
 
 ## What the playbook is doing
 
 - [x] Generate elliptic curve keys (certify, signing, encryption and authentication).
-- [x] Generate backup files for paperkey.
+- [x] Generate backup files for [paperkey](https://www.jabberwocky.com/software/paperkey/).
 - [x] Generate QRCodes backups of your key.
 - [x] Create or maintain LUKS encrypted backup drives.
 - [x] Restore keys from LUKS encrypted backup drives.
@@ -23,13 +23,13 @@ A powerful, complete and easy to use GPG key generation using Ansible locally.
 | Playbook     | Description                                                     |
 |--------------|-----------------------------------------------------------------|
 | main.yml     | Main playbook to generate a key                                 |
-| backup.yml   | Backup the key on a usb drive encrypted with luks               |
+| backup.yml   | Backup the key on a USB drive encrypted with LUKS               |
 | print.yml    | Create a PDF with all the information needed to restore the key |
 | restore.yml  | Restore the key from a backup drive                             |
 | yubikey.yml  | Copy the private keys on a yubikey and configure GPG            |
-| yubikey.yml  | Copy the private keys on a yubikey and configure GPG            |
 | pass.yml     | Initialise password store for Linux pass utility                |
 | packages.yml | Install the packges required                                    |
+
 
 ## Examples
 
@@ -40,5 +40,5 @@ A powerful, complete and easy to use GPG key generation using Ansible locally.
 
 Some links that I have used to create this project.
 
-- https://github.com/drduh/YubiKey-Guide?tab=readme-ov-file#multiple-hosts
-- https://www.maketecheasier.com/backup-gpg-key-linux-paperkey/
+- [Yubikey guide](https://github.com/drduh/YubiKey-Guide?tab=readme-ov-file#multiple-hosts)
+- [Backup Your GPG Key paperkey](https://www.maketecheasier.com/backup-gpg-key-linux-paperkey/)
