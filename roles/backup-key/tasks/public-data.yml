@@ -13,6 +13,16 @@
     part_type: primary
     state: present
 
+- name: Check the current partitions table
+  register: disk_info
+  become: true
+  ansible.builtin.wait_for:
+    path: '{{ disk_device }}1'
+    timeout: 2
+  retries: 10
+  delay: 2
+  until: disk_info
+
 - name: Create the filesystem for the public data
   become: true
   community.general.filesystem:
@@ -50,7 +60,7 @@
 - name: Copy the public key related files
   become: true
   copy:
-    src: '{{ backup_dir }}/{{ gnupg.name }}/{{ file }}'
+    src: '{{ backup_dir }}/{{ gnupg.name }}/public/{{ file }}'
     dest: /media/{{ user }}/gnupg-public/{{ gnupg.name }}/{{ file }}
     owner: '{{ user }}'
     group: '{{ user }}'

@@ -10,7 +10,10 @@
 
 - name: Store the backup drive if already present
   set_fact:
-    device_name: '{{ device.name if device.children[0].label | default(None) == "gnupg-public" else device_name }}'
+    device_name: >-
+      '{{ device.name
+      if device.children[0].label | default(None) == "gnupg-public"
+      else device_name }}'
   loop: '{{ all_drives.blockdevices }}'
   loop_control:
     loop_var: device
@@ -53,6 +56,7 @@
 - name: Check that the drive has been detected
   assert:
     that: 'device_name is match("^[vsh]d[a-z]$")'
+    fail_msg: Drive {{ device_name }} is not valid
 
 - name: Store the full device path
   set_fact:

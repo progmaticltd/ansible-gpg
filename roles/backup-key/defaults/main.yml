@@ -3,3 +3,8 @@
 # When this flag is set, the drive is not erased.
 # Instead, additional backups are added
 is_backup_drive: false
+
+# Do not try to autodetect the drive
+backup:
+  drive:
+    autodetect: false

@@ -13,11 +13,23 @@
     part_type: primary
     state: present
 
-- name: Create LUKS container
+- name: Create LUKS container if not existing
+  register: luks_open
   become: true
   community.crypto.luks_device:
     device: '{{ disk_device }}2'
     passphrase: '{{ luks_passphrase }}'
+    type: luks2
+    state: opened
+    name: gnupg-private
+  ignore_errors: true
+
+- name: Create LUKS container if not existing
+  when: luks_open is failed
+  become: true
+  community.crypto.luks_device:
+    device: '{{ disk_device }}2'
+    new_passphrase: '{{ luks_passphrase }}'
     type: luks2
     state: opened
     name: gnupg-private
@@ -59,7 +71,7 @@
 - name: Copy the private files
   become: true
   copy:
-    src: '{{ backup_dir }}/{{ gnupg.name }}/{{ file }}'
+    src: '{{ backup_dir }}/{{ gnupg.name }}/private/{{ file }}'
     dest: /media/{{ user }}/gnupg-private/{{ gnupg.name }}/{{ file }}
     owner: '{{ user }}'
     group: '{{ user }}'

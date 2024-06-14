@@ -3,9 +3,9 @@
 - name: Export the public SSH key
   shell: >-
     gpg --export-ssh-key {{ key_id }} >
-    {{ export_folder }}/private/ssh-public-key.pub
+    {{ export_folder }}/public/ssh-public-key.pub
   args:
-    creates: '{{ export_folder }}/private/ssh-public-key.pub'
+    creates: '{{ export_folder }}/public/ssh-public-key.pub'
   tags: ssh
 
 - name: Get the secret keys list
@@ -19,7 +19,8 @@
 
 - name: Store the authentication secret key
   set_fact:
-    auth_keys_grip: '{{ secret_keys_list_cmd.stdout | regex_replace(".*Keygrip = ", "") }}'
+    auth_keys_grip: >-
+      '{{ secret_keys_list_cmd.stdout | regex_replace(".*Keygrip = ", "") }}'
   tags: ssh
 
 - name: Check if an sshcontrol file already exists

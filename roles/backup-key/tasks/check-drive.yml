@@ -1,0 +1,36 @@
+---
+
+- name: Load the partitions list on the drive
+  become: true
+  register: device
+  parted:
+    device: /dev/{{ backup.drive.name }}
+    state: info
+
+- name: Store the partition names if exists
+  set_fact:
+    part1_name: '{{ device.partitions[0].name | default(false) }}'
+    part2_name: '{{ device.partitions[1].name | default(false) }}'
+
+- name: Set the invalid drive fact to false when no partition exists
+  when: part1_name == false and part2_name == false
+  set_fact:
+    invalid_drive: false
+
+- name: Set the invalid drive fact when different partition exists
+  when: part1_name != false and part2_name != false
+  set_fact:
+    invalid_drive: >-
+      '{{ part1_name != "gnupg-public"
+      or part2_name != "gnupg-private" }}'
+
+- name: Abort if there are already partitions
+  assert:
+    that: not invalid_drive | bool
+    fail_msg: |
+      This drive already contains partition !
+      Erase all the partitions first
+
+- name: Set the disk device name
+  set_fact:
+    disk_device: /dev/{{ backup.drive.name }}

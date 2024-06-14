@@ -37,3 +37,11 @@ gnupg:
 # Passphrase generation parameters
 passprase:
   gen_command: xkcdpass
+
+# Backup drive parameters
+# When autodetect is set to true,
+# You will be asked to plug your drive
+backup:
+  drive:
+    autodetect: false
+    name: sda
